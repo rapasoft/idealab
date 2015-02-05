@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence xmlns="http://java.sun.com/xml/ns/persistence" version="2.0">
+	<persistence-unit name="default">
+		<provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
+
+		<jta-data-source>${dataSource}</jta-data-source>
+
+		<properties>
+
+			<property name="hibernate.hbm2ddl.auto" value="create-drop"/>
+			<property name="hibernate.dialect" value="org.hibernate.dialect.HSQLDialect"/>
+			<property name="hibernate.transaction.manager_lookup_class" value="org.apache.openejb.hibernate.TransactionManagerLookup"/>
+
+		</properties>
+
+	</persistence-unit>
+</persistence>

@@ -1,13 +1,17 @@
 package ch.erni.community.idealab.ws;
 
+import javax.ejb.Stateless;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 
 /**
  * @author rap
  */
-@Path("helloworld")
-public class HelloWorld {
+@Path(HelloWorldResource.PATH)
+@Stateless
+public class HelloWorldResource {
+
+	public static final String PATH = "/helloworld";
 
 	@GET
 	public String message() {
