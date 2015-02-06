@@ -13,12 +13,13 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
-		<maven.compiler.testSource>1.7</maven.compiler.testSource>
-		<maven.compiler.testTarget>1.7</maven.compiler.testTarget>
+		<maven.compiler.testSource>1.8</maven.compiler.testSource>
+		<maven.compiler.testTarget>1.8</maven.compiler.testTarget>
 		<maven.compiler.fork>true</maven.compiler.fork>
 		<jackson.version>2.5.0</jackson.version>
 		<hsqlGeneratedPath>jdbc:hsqldb:target/db/test;shutdown=true</hsqlGeneratedPath>
 		<dataSource>java:jboss/datasources/ExampleDS</dataSource>
+		<applicationBaseUri>http://localhost:8080/idealab</applicationBaseUri>
 		<openejb.version>4.7.1</openejb.version>
 		<arquillian-version>1.1.4.Final</arquillian-version>
 		<arquillian-wildfly-version>8.1.0.CR2</arquillian-wildfly-version>
@@ -190,6 +191,54 @@
 		</testResources>
 
 		<plugins>
+			<!--
+						Not working yet due to Java 8 compatibility issues :(
+						<plugin>
+							<groupId>com.sun.jersey.contribs</groupId>
+							<artifactId>maven-wadl-plugin</artifactId>
+							<version>1.18.3</version>
+							<executions>
+								<execution>
+									<id>generate</id>
+									<goals>
+										<goal>generate</goal>
+									</goals>
+									<phase>package</phase>
+								</execution>
+							</executions>
+							<configuration>
+								<wadlFile>${project.build.outputDirectory}/application.wadl
+								</wadlFile>
+								<formatWadlFile>true</formatWadlFile>
+								<baseUri>${applicationBaseUri}/rest</baseUri>
+								<packagesResourceConfig>
+									<param>ch.erni.community.idealab.ws</param>
+								</packagesResourceConfig>
+								<wadlGenerators>
+									<wadlGeneratorDescription>
+										<className>com.sun.jersey.server.wadl.generators.WadlGeneratorApplicationDoc
+										</className>
+										<properties>
+											<property>
+												<name>applicationDocsFile</name>
+												<value>${basedir}/src/main/doc/application-doc.xml</value>
+											</property>
+										</properties>
+									</wadlGeneratorDescription>
+									<wadlGeneratorDescription>
+										<className>com.sun.jersey.server.wadl.generators.WadlGeneratorGrammarsSupport
+										</className>
+										<properties>
+											<property>
+												<name>grammarsFile</name>
+												<value>${basedir}/src/main/doc/application-grammars.xml</value>
+											</property>
+										</properties>
+									</wadlGeneratorDescription>
+								</wadlGenerators>
+							</configuration>
+						</plugin>
+			-->
 
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -263,6 +312,7 @@
 
 			<properties>
 				<maven.compiler.executable>${env.OPENSHIFT_WILDFLY_DIR}usr/lib/jvm/jdk1.8.0_05/bin/javac</maven.compiler.executable>
+				<applicationBaseUri>http://idealab-ernicommunity.rhcloud.com</applicationBaseUri>
 			</properties>
 		</profile>
 		<profile>

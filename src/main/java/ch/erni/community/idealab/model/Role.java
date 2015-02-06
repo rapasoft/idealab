@@ -8,6 +8,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -28,10 +29,10 @@ public class Role {
 	private String name;
 
 	@ManyToMany(mappedBy = "roles")
-	private List<User> users;
+	private List<User> users = new ArrayList<>();
 
 	@ManyToMany(mappedBy = "permittedRoles")
-	private List<State> states;
+	private List<State> states = new ArrayList<>();
 
 	public RoleDTO toDTO() {
 		return new RoleDTO(id, name, users.stream().map(User::toDTO).collect(Collectors.toList()), states.stream().map(State::toDTO).collect(Collectors.toList()));

@@ -19,6 +19,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author rap
@@ -41,46 +43,86 @@ public class RoleResourceTest {
 		return WebClient.create(WebServiceApplication.TESTING_ENDPOINT_ADDRESS, Arrays.asList(new JacksonJaxbJsonProvider()));
 	}
 
-	@Test
-	public void testListRoles() {
-		WebClient client = createWebClient();
+	private Collection<? extends RoleDTO> fetchRoles() {
+		WebClient role = createWebClient();
+		return role
+				.accept(MediaType.APPLICATION_JSON)
+				.path("/role")
+				.getCollection(RoleDTO.class);
+	}
 
-		client
-				.accept(MediaType.APPLICATION_JSON_TYPE)
-				.path("/role");
+	private Response createRole(String name) {
+		WebClient createRequest = createWebClient();
+		return createRequest
+				.type(MediaType.TEXT_PLAIN_TYPE)
+				.path("/role/create")
+				.post(name);
+	}
 
-		Collection<? extends RoleDTO> roles = client.getCollection(RoleDTO.class);
+	private Response readRole(Integer id) {
+		WebClient deleteRequest = createWebClient();
+		return deleteRequest
+				.type(MediaType.TEXT_PLAIN_TYPE)
+				.path("/role/read/" + id)
+				.get();
+	}
 
-		Assert.assertTrue(roles != null);
-		Assert.assertTrue(roles.isEmpty());
+	private Response deleteRole(Integer id) {
+		WebClient deleteRequest = createWebClient();
+		return deleteRequest
+				.type(MediaType.TEXT_PLAIN_TYPE)
+				.path("/role/delete/" + id)
+				.delete();
 	}
 
 	@Test
-	public void addRole() {
-		WebClient owner = createWebClient();
-		Response forOwner = owner
-				.type(MediaType.TEXT_PLAIN_TYPE)
-				.path("/role/add")
-				.post("Owner");
-
-		WebClient editor = createWebClient();
-		Response forEditor = editor
-				.type(MediaType.TEXT_PLAIN_TYPE)
-				.path("/role/add")
-				.post("Editor");
-
-		Assert.assertEquals(Response.ok().build().getStatus(), forOwner.getStatus());
-		Assert.assertEquals(Response.ok().build().getStatus(), forEditor.getStatus());
-
-		WebClient role = createWebClient();
-		role
-				.accept(MediaType.APPLICATION_JSON)
-				.path("/role");
-
-		Collection<? extends RoleDTO> roles = role.getCollection(RoleDTO.class);
+	public void testListRoles() {
+		Collection roles = fetchRoles();
 
 		Assert.assertTrue(roles != null);
-		Assert.assertEquals(2, roles.size());
+	}
+
+	@Test
+	public void testAddRole() {
+		Response role1 = createRole("Role1");
+		Assert.assertEquals(Response.status(201).build().getStatus(), role1.getStatus());
+
+		Response role2 = createRole("Role2");
+		Assert.assertEquals(Response.status(201).build().getStatus(), role2.getStatus());
+
+		Collection<? extends RoleDTO> roles = fetchRoles();
+		Assert.assertTrue(roles != null);
+		List<String> roleNames = roles.stream().map(role -> role.getName()).collect(Collectors.toList());
+		Assert.assertTrue(roleNames.contains("Role1"));
+		Assert.assertTrue(roleNames.contains("Role2"));
+	}
+
+	@Test
+	public void testReadRole() {
+		Response role1 = createRole("Read");
+		Assert.assertEquals(Response.status(201).build().getStatus(), role1.getStatus());
+
+		Integer roleId = role1.readEntity(Integer.TYPE);
+
+		Response readRole = readRole(roleId);
+		RoleDTO roleDTO = readRole.readEntity(RoleDTO.class);
+
+		Assert.assertEquals("Read", roleDTO.getName());
+	}
+
+	@Test
+	public void testDeleteRole() {
+		Response role1 = createRole("Delete");
+		Assert.assertEquals(Response.status(201).build().getStatus(), role1.getStatus());
+		Integer roleId = role1.readEntity(Integer.TYPE);
+
+		Response deleteRole = deleteRole(roleId);
+		Assert.assertEquals(Response.accepted().build().getStatus(), deleteRole.getStatus());
+
+		Collection<? extends RoleDTO> roles = fetchRoles();
+		Assert.assertTrue(roles != null);
+		List<String> roleNames = roles.stream().map(role -> role.getName()).collect(Collectors.toList());
+		Assert.assertFalse(roleNames.contains("Delete"));
 	}
 
 }

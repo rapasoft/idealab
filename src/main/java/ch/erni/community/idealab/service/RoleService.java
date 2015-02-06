@@ -13,11 +13,18 @@ import java.util.stream.Collectors;
 @Stateless
 public class RoleService extends CrudService<Role> {
 
-	public void addNewRole(String roleName) {
+	@Override
+	public Class<Role> entityClass() {
+		return Role.class;
+	}
+
+	public Role addNewRole(String roleName) {
 		Role role = new Role();
 		role.setName(roleName);
 
 		entityManager.persist(role);
+
+		return role;
 	}
 
 	public List<RoleDTO> fetchAllRoles() {
@@ -30,8 +37,15 @@ public class RoleService extends CrudService<Role> {
 		return role.toDTO();
 	}
 
-	@Override
-	public Class<Role> entityClass() {
-		return Role.class;
+	public void deleteRole(Integer id) {
+		Role roleToDelete = entityManager.find(Role.class, id);
+
+		entityManager.remove(roleToDelete);
+	}
+
+	public void changeRoleName(Integer id, String name) {
+		Role roleToChange = entityManager.find(Role.class, id);
+
+		roleToChange.setName(name);
 	}
 }
