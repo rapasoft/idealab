@@ -4,7 +4,7 @@ Idealab proof of concept with Java EE 7 and Openshift.
 
 Simple clone repository and issue a command from console:
 
-`mvn clean packacke -Plocal_development`
+`mvn clean package -Plocal_development`
 
 which will effectively clean and build the application, download and unzip JBoss Wildfly AS into target directory and run integration tests using Arquillian. This might take a while :) and yes, it is not very effective but it is a one-command proof that you can quickly build WebServices
 
